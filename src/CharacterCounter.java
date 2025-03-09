@@ -61,7 +61,7 @@ public class CharacterCounter {
 
         characterTextField.getDocument().addDocumentListener(new DocumentListener() {
             private void countChar() {
-                if (characterTextField.getText().length() > 0) {
+                if (!characterTextField.getText().isEmpty()) {
                     Character filterCh = characterTextField.getText().charAt(0);
 
                     outputResult(filterCh);
