@@ -44,7 +44,7 @@ public class CharacterCounter {
         pathToFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                int returnVals = fileChooser.showOpenDialog(mainFrame);
                 int returnVal = fileChooser.showOpenDialog(mainFrame);
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
