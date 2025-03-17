@@ -1,3 +1,5 @@
+package org.project;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -33,7 +35,7 @@ public class CharacterCounter {
 
 
     public void createAndShowGUI() {
-        mainFrame.setSize(400,240);
+        mainFrame.setSize(400, 240);
 
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -44,13 +46,13 @@ public class CharacterCounter {
         pathToFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                int returnVals = fileChooser.showOpenDialog(mainFrame);
                 int returnVal = fileChooser.showOpenDialog(mainFrame);
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
 
-                    pathToFileTextField.setText(file.getName());
+                    // Вивести шлях до файлу
+                    pathToFileTextField.setText(file.getAbsolutePath());
 
                     outputResult(null);
                 }
@@ -66,11 +68,9 @@ public class CharacterCounter {
 
                     outputResult(filterCh);
                 } else {
-
                     countOfCharacterLabel.setText("0");
                 }
             }
-
 
             @Override
             public void insertUpdate(DocumentEvent documentEvent) {
@@ -88,8 +88,6 @@ public class CharacterCounter {
             }
         });
 
-
-
         panel.add(pathToFileLabel);
         panel.add(pathToFileTextField);
         panel.add(pathToFileButton);
@@ -105,67 +103,45 @@ public class CharacterCounter {
 
         mainFrame.add(panel);
 
-        layout.putConstraint(SpringLayout.WEST, pathToFileLabel, 5,
-                SpringLayout.WEST, panel);
-        layout.putConstraint(SpringLayout.NORTH, pathToFileLabel, 5,
-                SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.WEST, pathToFileLabel, 5, SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, pathToFileLabel, 5, SpringLayout.NORTH, panel);
 
-        layout.putConstraint(SpringLayout.WEST, pathToFileTextField, 5,
-                SpringLayout.WEST, panel);
-        layout.putConstraint(SpringLayout.NORTH, pathToFileTextField, 5,
-                SpringLayout.SOUTH, pathToFileLabel);
+        layout.putConstraint(SpringLayout.WEST, pathToFileTextField, 5, SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, pathToFileTextField, 5, SpringLayout.SOUTH, pathToFileLabel);
 
-        layout.putConstraint(SpringLayout.WEST, pathToFileButton, 5,
-                SpringLayout.EAST, pathToFileTextField);
-        layout.putConstraint(SpringLayout.NORTH, pathToFileButton, 0,
-                SpringLayout.NORTH, pathToFileTextField);
+        layout.putConstraint(SpringLayout.WEST, pathToFileButton, 5, SpringLayout.EAST, pathToFileTextField);
+        layout.putConstraint(SpringLayout.NORTH, pathToFileButton, 0, SpringLayout.NORTH, pathToFileTextField);
 
+        layout.putConstraint(SpringLayout.WEST, countOfCharactersDescriptionLabel, 5, SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, countOfCharactersDescriptionLabel, 10, SpringLayout.SOUTH, pathToFileTextField);
 
-        layout.putConstraint(SpringLayout.WEST, countOfCharactersDescriptionLabel, 5,
-                SpringLayout.WEST, panel);
-        layout.putConstraint(SpringLayout.NORTH, countOfCharactersDescriptionLabel, 10,
-                SpringLayout.SOUTH, pathToFileTextField);
+        layout.putConstraint(SpringLayout.WEST, countOfCharactersLabel, 5, SpringLayout.EAST, countOfCharactersDescriptionLabel);
+        layout.putConstraint(SpringLayout.NORTH, countOfCharactersLabel, 0, SpringLayout.NORTH, countOfCharactersDescriptionLabel);
 
-        layout.putConstraint(SpringLayout.WEST, countOfCharactersLabel, 5,
-                SpringLayout.EAST, countOfCharactersDescriptionLabel);
-        layout.putConstraint(SpringLayout.NORTH, countOfCharactersLabel, 0,
-                SpringLayout.NORTH, countOfCharactersDescriptionLabel);
+        layout.putConstraint(SpringLayout.WEST, characterLabel, 5, SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, characterLabel, 10, SpringLayout.SOUTH, countOfCharactersDescriptionLabel);
 
+        layout.putConstraint(SpringLayout.WEST, characterTextField, 5, SpringLayout.EAST, characterLabel);
+        layout.putConstraint(SpringLayout.NORTH, characterTextField, 0, SpringLayout.NORTH, characterLabel);
 
-        layout.putConstraint(SpringLayout.WEST, characterLabel, 5,
-                SpringLayout.WEST, panel);
-        layout.putConstraint(SpringLayout.NORTH, characterLabel, 10,
-                SpringLayout.SOUTH, countOfCharactersDescriptionLabel);
+        layout.putConstraint(SpringLayout.WEST, countOfCharacterDescriptionLabel, 5, SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, countOfCharacterDescriptionLabel, 10, SpringLayout.SOUTH, characterTextField);
 
-        layout.putConstraint(SpringLayout.WEST, characterTextField, 5,
-                SpringLayout.EAST, characterLabel);
-        layout.putConstraint(SpringLayout.NORTH, characterTextField, 0,
-                SpringLayout.NORTH, characterLabel);
-
-
-        layout.putConstraint(SpringLayout.WEST, countOfCharacterDescriptionLabel, 5,
-                SpringLayout.WEST, panel);
-        layout.putConstraint(SpringLayout.NORTH, countOfCharacterDescriptionLabel, 10,
-                SpringLayout.SOUTH, characterTextField);
-
-        layout.putConstraint(SpringLayout.WEST, countOfCharacterLabel, 5,
-                SpringLayout.EAST, countOfCharacterDescriptionLabel);
-        layout.putConstraint(SpringLayout.NORTH, countOfCharacterLabel, 0,
-                SpringLayout.NORTH, countOfCharacterDescriptionLabel);
-
+        layout.putConstraint(SpringLayout.WEST, countOfCharacterLabel, 5, SpringLayout.EAST, countOfCharacterDescriptionLabel);
+        layout.putConstraint(SpringLayout.NORTH, countOfCharacterLabel, 0, SpringLayout.NORTH, countOfCharacterDescriptionLabel);
 
         mainFrame.setVisible(true);
     }
 
-    private static Integer countCharactersInFile(File file, Character filterCh) throws IOException {
+    public static Integer countCharactersInFile(File file, Character filterCh) throws IOException {
         int result = 0;
 
-        Charset encoding = Charset.defaultCharset();
+        Charset encoding = Charset.defaultCharset(); // можна уточнити кодування, якщо потрібно
         try (InputStream in = new FileInputStream(file);
              Reader reader = new InputStreamReader(in, encoding);
-             Reader buffer = new BufferedReader(reader)) {
+             BufferedReader bufferedReader = new BufferedReader(reader)) {
             int r;
-            while ((r = buffer.read()) != -1) {
+            while ((r = bufferedReader.read()) != -1) {
                 char ch = (char) r;
 
                 if (filterCh == null) {
@@ -173,18 +149,21 @@ public class CharacterCounter {
                 } else if (filterCh == ch) {
                     result++;
                 }
-
             }
-        };
+        }
 
         return result;
     }
 
-
     private void outputResult(Character filterCh) {
         File file = fileChooser.getSelectedFile();
-        Integer cnt = 0;
+        if (file == null) {
+            JOptionPane.showMessageDialog(null, "Будь ласка, виберіть файл.");
+            return;
+        }
 
+        Integer cnt = 0;
+        Integer ccc= 0;
         try {
             cnt = countCharactersInFile(file, filterCh);
         } catch (IOException e) {
@@ -197,7 +176,6 @@ public class CharacterCounter {
             countOfCharacterLabel.setText(cnt.toString());
         }
     }
-
 
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
